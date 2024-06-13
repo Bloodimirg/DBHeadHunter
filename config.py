@@ -1,6 +1,5 @@
 from configparser import ConfigParser
 
-
 hh_api_config = {
     'employer_ids': ['4767781',  # AlfaBit
                      '2944864',  # OOO AVPOWER
@@ -11,22 +10,21 @@ hh_api_config = {
                      '1723062',  # DIGINETICA
                      '9322264',  # Налитек
                      '3642645',  # aQsi
-                     '4934'],    # Билайн
+                     '1740'],  # яндекс
     'vacancies_per_page': 100,
     'area': 113,
     'only_with_salary': True
 }
 
 
-def config(filename='database.ini'):
+def config(section='postgresql', filename='database.ini'):
     parser = ConfigParser()
     parser.read(filename)
-    db = {}
-    if parser.has_section('postgresql'):  # Удалено использование параметра section
-        params = parser.items('postgresql')  # Также удалено использование параметра section
-        for param in params:
-            db[param[0]] = param[1]
+
+    if parser.has_section(section):
+        params = parser.items(section)
+        db = dict(params)
+        return db
     else:
-        raise Exception('Section postgresql is not found in the database.ini file')
-    return db
+        raise Exception(f'Section {section} is not found in the {filename}')
 
