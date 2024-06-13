@@ -32,8 +32,7 @@ class DBConnection:
                 id INT PRIMARY KEY,
                 company_name VARCHAR(255) NOT NULL,
                 city VARCHAR(255),
-                url VARCHAR(255),
-                open_vacancies INT
+                url VARCHAR(255)
                 )""")
 
                 cursor.execute("""
@@ -51,14 +50,13 @@ class DBConnection:
             with conn.cursor() as cursor:
                 for employer in employer_data:
                     cursor.execute("""
-                    INSERT INTO companies(id, company_name, city, url, open_vacancies) VALUES (%s, %s, %s, %s, %s);
+                    INSERT INTO companies(id, company_name, city, url) VALUES (%s, %s, %s, %s);
                     
                     """, (
                         employer['id'],
                         employer['name'],
                         employer['city'],
-                        employer['url'],
-                        employer['open_vacancies']
+                        employer['url']
                     ))
 
     def insert_vacancies(self, vacancies_data):
