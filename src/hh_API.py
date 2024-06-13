@@ -25,13 +25,11 @@ class HeadHunterAPI:
                 company_name = company_data.get('name')
                 city = company_data.get('area', {}).get('name')
                 url = company_data.get('alternate_url')
-                open_vacancies = company_data.get('open_vacancies')
                 employer_info = {
                     'id': company_id,
                     'name': company_name,
                     'city': city,
                     'url': url,
-                    'open_vacancies': open_vacancies,
                 }
                 employers_info.append(employer_info)
 
