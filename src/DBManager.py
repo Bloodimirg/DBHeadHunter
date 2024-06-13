@@ -14,7 +14,8 @@ class DBManager(DBConnection, HeadHunterAPI):
         """Получает список всех компаний и количество вакансий у каждой компании"""
         with psycopg2.connect(dbname=self.db_name, **config()) as conn:
             with conn.cursor() as cur:
-                query = "SELECT company_name, open_vacancies FROM companies ORDER BY open_vacancies"
+                query = """SELECT companies.company_name AS company_name, COUNT(vacancies.id) AS vacancy_count FROM companies 
+                LEFT JOIN vacancies ON companies.id = vacancies.company_id GROUP BY companies.id ORDER BY vacancy_count;"""
                 cur.execute(query)
                 rows = cur.fetchall()
                 # тут же пока что и распечатываем
@@ -45,7 +46,7 @@ class DBManager(DBConnection, HeadHunterAPI):
 
                 # делаем переменную для вывода количества вакансий по которым идет расчёт
                 query_count = """
-                SELECT COUNT(v.id) FROM vacancies v JOIN companies c ON v.company_id = c.id WHERE c.open_vacancies > 0
+                SELECT COUNT(v.id) FROM vacancies v JOIN companies c ON v.company_id = c.id
                 """
                 cur.execute(query_count)
                 row_count = cur.fetchone()
@@ -55,7 +56,7 @@ class DBManager(DBConnection, HeadHunterAPI):
         """Получает список всех вакансий, у которых зарплата выше средней по всем вакансиям"""
         with psycopg2.connect(dbname=self.db_name, **config()) as conn:
             with conn.cursor() as cur:
-                query = ("select vacancy_name from vacancies where ((salary_min + salary_max) / 2)"
+                query = ("select vacancy_name, url from vacancies where ((salary_min + salary_max) / 2)"
                          " > (select avg((salary_min + salary_max) / 2) from vacancies)")
                 cur.execute(query)
                 rows = cur.fetchall()
