@@ -1,7 +1,7 @@
 import psycopg2
 from config import config
-from DBConnection import DBConnection
-from hh_API import HeadHunterAPI
+from src.DBConnection import DBConnection
+from src.hh_API import HeadHunterAPI
 
 
 class DBManager(DBConnection, HeadHunterAPI):
@@ -17,6 +17,7 @@ class DBManager(DBConnection, HeadHunterAPI):
                 query = "SELECT company_name, open_vacancies FROM companies ORDER BY open_vacancies"
                 cur.execute(query)
                 rows = cur.fetchall()
+                # тут же пока что и распечатываем
                 for row in rows:
                     print("Название компании:", row[0])  # company_name
                     print("Количество вакансий:", row[1])  # open_vacancies
@@ -37,10 +38,12 @@ class DBManager(DBConnection, HeadHunterAPI):
         """Получает среднюю зарплату по вакансиям"""
         with psycopg2.connect(dbname=self.db_name, **config()) as conn:
             with conn.cursor() as cur:
+                # считаем среднюю заработную плату по всем вакансиям
                 query_salary = "SELECT avg((salary_min + salary_max) / 2) FROM vacancies"
                 cur.execute(query_salary)
                 rows = cur.fetchone()
 
+                # делаем переменную для вывода количества вакансий по которым идет расчёт
                 query_count = """
                 SELECT COUNT(v.id) FROM vacancies v JOIN companies c ON v.company_id = c.id WHERE c.open_vacancies > 0
                 """
@@ -62,6 +65,8 @@ class DBManager(DBConnection, HeadHunterAPI):
         """Получает список всех вакансий, в названии которых содержатся переданные в метод слова, например python"""
         with psycopg2.connect(dbname=self.db_name, **config()) as conn:
             with conn.cursor() as cur:
+                # vacancy_name в нижнем регистре
+                # поиск вхождений вводимого слова %{keyword}%'
                 query = (f"SELECT vacancy_name, salary_min, salary_max, url FROM vacancies WHERE lower(vacancy_name) "
                          f"like '%{keyword}%'")
                 cur.execute(query)
