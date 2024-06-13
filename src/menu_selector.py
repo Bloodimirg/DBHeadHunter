@@ -67,8 +67,7 @@ class MenuSelector(DBManager):
                 print(f"Вакансии с наибольшей средней заработной платой:\n{'-' * 40}")
                 higher_salary = db_select.get_vacancies_with_higher_salary()
                 for vacancy in higher_salary:
-                    higher_salary = vacancy[0]
-                    print(higher_salary)
+                    print(f"{vacancy[0]} - {vacancy[1]}")
 
             elif user_select_menu == 5:
                 user_input = input("Введите ключевое слово в названии вакансии, например 'python'\n").lower()
